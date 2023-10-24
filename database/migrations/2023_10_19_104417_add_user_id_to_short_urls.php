@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('short_urls', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
