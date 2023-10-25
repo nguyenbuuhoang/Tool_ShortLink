@@ -16,7 +16,8 @@
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <div class="filter-icon-container">
-                        <i id="filter-icon" class="fa-solid fa-filter fa-beat-fade fa-xl" style="cursor: pointer; color: blue;"></i>
+                        <i id="filter-icon" class="fa-solid fa-filter fa-beat-fade fa-xl"
+                            style="cursor: pointer; color: blue;"></i>
                     </div>
                     <button id="exportCSV" class="btn btn-primary">Export to CSV</button>
                 </div>

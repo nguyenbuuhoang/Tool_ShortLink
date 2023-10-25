@@ -24,10 +24,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Lấy URL của trang web
     var currentURL = window.location.origin;
-
-    // Cập nhật nội dung của thẻ span với URL cơ sở
     document.getElementById("baseURL").textContent = currentURL + "/";
   });
 </script>
