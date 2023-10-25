@@ -55,10 +55,10 @@ class ShortUrlController extends Controller
         }
 
         $shortCode = $request->input('short_code');
-
+        $status = $request->input('status');
         $shortUrl->short_code = $shortCode;
         $shortUrl->short_url_link = str_replace(['http://', 'https://'], '', url($shortCode));
-
+        $shortUrl->status = $status;
         $shortUrl->save();
 
         return response()->json(

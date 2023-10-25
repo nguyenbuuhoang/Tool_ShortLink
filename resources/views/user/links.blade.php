@@ -191,20 +191,22 @@
                 row.find('.edit-action').on('click', function(e) {
                     e.preventDefault();
                     const shortUrlId = shortUrl.id;
-
+                    const currentShortCode = shortUrl.short_code;
                     $('#editModal').modal('show');
-
+                    $('#newShortCode').val(currentShortCode);
                     $('#saveShortCode').on('click', function() {
                         const newShortCode = $('#newShortCode').val();
+                        const newStatus = $('#newStatus').val();
 
-                        if (newShortCode) {
+                        if (newShortCode && newStatus) {
                             $(this).off('click');
 
                             $.ajax({
                                 url: `api/short-urls/${shortUrlId}`,
                                 method: 'PUT',
                                 data: {
-                                    short_code: newShortCode
+                                    short_code: newShortCode,
+                                    status: newStatus
                                 },
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
@@ -222,7 +224,6 @@
                             $('#editModal').modal('hide');
                         }
                     });
-
                 });
 
                 row.find('.delete-action').on('click', function(e) {
