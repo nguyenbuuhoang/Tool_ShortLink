@@ -46,7 +46,7 @@ class VerificationEmail extends Mailable
             with: ([
                 'user' => $this->user,
                 'verificationCode' => $this->verificationCode,
-                'verificationLink' => 'http://localhost/verify?id=' . $this->user->id,
+                'verificationLink' => env('APP_URL') . '/verify?id=' . $this->user->id,
             ]),
         );
     }

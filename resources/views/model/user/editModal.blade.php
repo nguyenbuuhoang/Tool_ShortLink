@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <label for="newShortCode">Nhập URL:</label>
                 <div class="input-group">
-                    <span class="input-group-text">localhost/</span>
+                    <span class="input-group-text" id="baseURL"></span>
                     <input type="text" id="newShortCode" class="form-control">
                 </div>
             </div>
@@ -21,3 +21,13 @@
         </div>
     </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Lấy URL của trang web
+    var currentURL = window.location.origin;
+
+    // Cập nhật nội dung của thẻ span với URL cơ sở
+    document.getElementById("baseURL").textContent = currentURL + "/";
+  });
+</script>

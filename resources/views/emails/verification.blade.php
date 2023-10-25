@@ -24,8 +24,7 @@
                     style="background-color:#fff;color:#444;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:14px;line-height:140%;padding:25px 35px">
                     <h1 style="font-size:20px;font-weight:bold;line-height:1.3;margin:0 0 15px 0">Verify your identity
                     </h1>
-                    <p style="margin:0 0 15px 0;padding:0 0 0 0">Hi <a href="mailto:buuhoanglx1105@gmail.com"
-                            target="_blank">{{ $user->name }}</a>,</p>
+                    <p style="margin:0 0 15px 0;padding:0 0 0 0">Hi {{ $user->name }},</p>
                     <p style="margin:0 0 15px 0;padding:0 0 0 0">Bạn đã đăng ký tài khoản thành công, hãy nhập mã xác
                         thực vào link dưới để xác nhận</p>
                 </td>
