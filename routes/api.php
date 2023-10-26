@@ -51,5 +51,6 @@ Route::delete('delete-selected-users', [UserListController::class, 'deleteSelect
 Route::get('/totals', [ShortLinksController::class, 'getTotal']);
 //Admin ShortURL
 Route::get('/user-list/shortURL', [ShortLinksController::class, 'getShortURL']);
-
+Route::get('/shortURL/{id}', [ShortLinksController::class, 'updateShortURL']);
+//create role
 Route::get('create', [MakeRoleController::class, 'create']);

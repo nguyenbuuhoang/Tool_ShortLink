@@ -42,4 +42,25 @@ class ShortLinksController extends Controller
 
         return response()->json($shortUrls);
     }
+    public function updateShortURL(Request $request, $id)
+    {
+        $shortUrl = ShortUrl::findOrFail($id);
+
+        $shortUrl->update([
+            'short_code' => $request->input('short_code'),
+            'short_url_link' => str_replace(['http://', 'https://'], '', url($request->input('short_code'))),
+            'status' => $request->input('status'),
+            'expired_at' => $request->input('expired_at'),
+        ]);
+
+        return response()->json(['message' => 'Short URL đã được cập nhật thành công.']);
+    }
+
+
+    public function deleteShortURL($id)
+    {
+        $shortUrl = User::findOrFail($id);
+        $shortUrl->delete();
+        return response()->json(['message' => 'Đã xóa short Url thành công'], 200);
+    }
 }
