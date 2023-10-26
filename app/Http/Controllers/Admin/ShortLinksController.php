@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\ShortUrl;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class ShortLinksController extends Controller
@@ -19,11 +20,25 @@ class ShortLinksController extends Controller
         return response()->json($totals);
     }
 
-    public function getShortURL($perPage = 4)
+    public function getShortURL(Request $request)
     {
-        $shortUrls = ShortUrl::with('user:id,name')
-            ->select('id', 'url', 'short_url_link', 'short_code', 'clicks', 'status', 'expired_at', 'created_at', 'user_id')
-            ->paginate($perPage);
+        $perPage = $request->input('per_page', 4);
+        $sort_by = $request->input('sort_by', 'id');
+        $sort_order = $request->input('sort_order', 'asc');
+        $name = $request->input('name');
+
+        $query = ShortUrl::with('user:id,name')
+            ->select('id', 'url', 'short_url_link', 'short_code', 'clicks', 'status', 'expired_at', 'created_at', 'user_id');
+
+        if ($name) {
+            $query->whereHas('user', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
+        }
+
+        $query->orderBy($sort_by, $sort_order);
+
+        $shortUrls = $query->paginate($perPage);
 
         return response()->json($shortUrls);
     }

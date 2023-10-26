@@ -18,7 +18,7 @@
                                     <select id="sortBy" class="form-control">
                                         <option value="id">ID</option>
                                         <option value="name">Tên User</option>
-                                        <option value="roles">Quyền</option>
+                                        <option value="role">Quyền</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-2">
@@ -38,8 +38,7 @@
                             <div class="row">
                                 <div class="col-md-1 mb-2">
                                     <div class="form-group">
-                                        <button type="button" id="filter-button"
-                                            class="btn btn-primary btn-block">Lọc</button>
+                                        <button type="button" id="filter-button" class="btn btn-primary btn-block">Lọc</button>
                                     </div>
                                 </div>
                             </div>
@@ -64,41 +63,13 @@
                         </div>
                     </div>
                     <div class="pagination" id="pagination">
+                        <!-- Pagination links will be added here -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="editRoleModal" tabindex="-1" role="dialog" aria-labelledby="editRoleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editRoleModalLabel" style="color: black;">Chỉnh sửa vai trò</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editRoleForm">
-                        <div class="form-group">
-                            <label for="roleSelect" style="color: black;">Chọn vai trò:</label>
-                            <select class="form-control" id="roleSelect" name="role"
-                                style="background-color: rgb(89, 89, 92); color: white;">
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" id="saveRoleButton">Lưu</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <script>
         $(document).ready(function() {
             const tableBody = $('tbody');
@@ -107,6 +78,7 @@
             const sortBy = $('#sortBy');
             const sortOrder = $('#sortOrder');
             const pagination = $('#pagination');
+
             let currentPage = 1;
 
             function formatDateString(dateString) {
@@ -146,82 +118,6 @@
                 `;
                 return row;
             }
-            $.ajax({
-                url: '/api/users-list',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    const users = data.users.data;
-
-                    if (users.length > 0) {
-                        const userRows = users.map(createUserRow).join('');
-                        tableBody.html(userRows);
-                    } else {
-                        tableBody.html('<tr><td colspan="8">Không tìm thấy người dùng</td></tr>');
-                    }
-                },
-                error: function(error) {
-                    console.error('Lỗi:', error);
-                }
-            });
-            tableBody.on('click', '.edit-action', function(e) {
-                e.preventDefault();
-
-                const row = $(this).closest('tr');
-                const userId = row.find('td:first')
-                    .text();
-                $('#roleSelect').val('');
-                $('#editRoleModal').modal('show');
-                $('#saveRoleButton').data('userId', userId);
-            });
-
-            $('#saveRoleButton').click(function() {
-                const userId = $(this).data('userId');
-                const selectedRole = $('#roleSelect').val();
-                $.ajax({
-                    url: `/api/users/${userId}`,
-                    method: 'PUT',
-                    data: {
-                        role: selectedRole
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                            'content'),
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        alert('Cập nhật thành công.');
-                        location.reload();
-                    },
-                    error: function(error) {
-                        console.error('Lỗi khi cập nhật vai trò:', error);
-                    }
-                });
-                $('#editRoleModal').modal('hide');
-            });
-            tableBody.on('click', '.delete-action', function(e) {
-                e.preventDefault();
-                const userId = $(this).closest('tr').find('td:first').text();
-                const confirmation = confirm('Bạn có chắc chắn muốn xóa người dùng này?');
-                if (confirmation) {
-                    $.ajax({
-                        url: `/api/users/${userId}`,
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            alert(data.message);
-                            $(e.target).closest('tr').remove();
-                        },
-                        error: function(error) {
-                            console.error('Lỗi:', error);
-                            alert('Lỗi xóa người dùng');
-                        }
-                    });
-                }
-            });
 
             function fetchDataAndPopulateTable(page) {
                 currentPage = page;

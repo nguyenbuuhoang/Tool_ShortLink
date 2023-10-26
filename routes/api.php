@@ -46,9 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
 //Admin ListUser
 Route::get('/users-list', [UserListController::class, 'getListUser']);
 Route::put('/users/{id}', [UserListController::class, 'updateUser']);
+Route::delete('/users/{id}', [UserListController::class, 'deleteUser']);
+Route::delete('delete-selected-users', [UserListController::class, 'deleteSelectedUsers']); //select delete
 Route::get('/totals', [ShortLinksController::class, 'getTotal']);
 //Admin ShortURL
 Route::get('/user-list/shortURL', [ShortLinksController::class, 'getShortURL']);
 
 Route::get('create', [MakeRoleController::class, 'create']);
-

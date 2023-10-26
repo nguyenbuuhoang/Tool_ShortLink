@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+<!-- @extends('admin.layouts.app')
 
 @section('content')
     <div class="content-wrapper">
@@ -7,43 +7,6 @@
                 <div class="col-12 col-lg-12">
                     <div class="card">
                         <div class="card-header">Danh sách user</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-2">
-                                    <label for="nameFilter">Tìm theo Tên:</label>
-                                    <input type="text" id="nameFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortBy">Sắp xếp theo:</label>
-                                    <select id="sortBy" class="form-control">
-                                        <option value="id">ID</option>
-                                        <option value="name">Tên User</option>
-                                        <option value="roles">Quyền</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortOrder">Thứ tự:</label>
-                                    <select id="sortOrder" class="form-control">
-                                        <option value="asc">Tăng dần</option>
-                                        <option value="desc">Giảm dần</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2 mb-2">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button id="exportCSV" class="btn btn-success btn-block">Export to CSV</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-1 mb-2">
-                                    <div class="form-group">
-                                        <button type="button" id="filter-button"
-                                            class="btn btn-primary btn-block">Lọc</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush table-borderless">
                                 <thead>
@@ -62,8 +25,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div class="pagination" id="pagination">
                     </div>
                 </div>
             </div>
@@ -99,15 +60,11 @@
             </div>
         </div>
     </div>
+
+
     <script>
         $(document).ready(function() {
             const tableBody = $('tbody');
-            const filterButton = $('#filter-button');
-            const nameFilter = $('#nameFilter');
-            const sortBy = $('#sortBy');
-            const sortOrder = $('#sortOrder');
-            const pagination = $('#pagination');
-            let currentPage = 1;
 
             function formatDateString(dateString) {
                 const createdDate = new Date(dateString);
@@ -146,24 +103,6 @@
                 `;
                 return row;
             }
-            $.ajax({
-                url: '/api/users-list',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    const users = data.users.data;
-
-                    if (users.length > 0) {
-                        const userRows = users.map(createUserRow).join('');
-                        tableBody.html(userRows);
-                    } else {
-                        tableBody.html('<tr><td colspan="8">Không tìm thấy người dùng</td></tr>');
-                    }
-                },
-                error: function(error) {
-                    console.error('Lỗi:', error);
-                }
-            });
             tableBody.on('click', '.edit-action', function(e) {
                 e.preventDefault();
 
@@ -222,64 +161,25 @@
                     });
                 }
             });
+            $.ajax({
+                url: '/api/users-list',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    const users = data.users.data;
 
-            function fetchDataAndPopulateTable(page) {
-                currentPage = page;
-                const name = nameFilter.val();
-                const sort_by = sortBy.val();
-                const sort_order = sortOrder.val();
-
-                $.ajax({
-                    url: '/api/users-list',
-                    method: 'GET',
-                    data: {
-                        name,
-                        sort_by,
-                        sort_order,
-                        page,
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        const users = data.users.data;
-
-                        if (users.length > 0) {
-                            const userRows = users.map(createUserRow).join('');
-                            tableBody.html(userRows);
-                        } else {
-                            tableBody.html('<tr><td colspan="8">Không tìm thấy người dùng</td></tr>');
-                        }
-
-                        updatePagination(data);
-                    },
-                    error: function(error) {
-                        console.error('Lỗi:', error);
+                    if (users.length > 0) {
+                        const userRows = users.map(createUserRow).join('');
+                        tableBody.html(userRows);
+                    } else {
+                        tableBody.html('<tr><td colspan="8">Không tìm thấy người dùng</td></tr>');
                     }
-                });
-            }
-
-            const updatePagination = data => {
-                pagination.empty();
-                if (data.users.total > data.users.per_page) {
-                    for (let i = 1; i <= data.users.last_page; i++) {
-                        const pageLink = $('<a>').addClass('page-link').text(i);
-                        pageLink.on('click', () => fetchDataAndPopulateTable(i));
-
-                        const listItem = $('<li>').addClass('page-item');
-                        if (i === currentPage) {
-                            listItem.addClass('active');
-                        }
-                        listItem.append(pageLink);
-
-                        pagination.append(listItem);
-                    }
+                },
+                error: function(error) {
+                    console.error('Lỗi:', error);
                 }
-            };
-
-            filterButton.click(function() {
-                fetchDataAndPopulateTable(1);
             });
-
-            fetchDataAndPopulateTable(1);
         });
     </script>
 @endsection
+ -->
