@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\MakeRoleController;
-use App\Http\Controllers\Admin\ShortLinksController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\AuthController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\ShortURLController;
+use App\Http\Controllers\Admin\MakeRoleController;
+use App\Http\Controllers\Admin\UserListController;
+use App\Http\Controllers\Admin\ShortLinksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,9 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/short-urls/{id}', [ShortURLController::class, 'deleteShortURL']);
 });
 
-//AdminController
-Route::get('/users-list', [UserController::class, 'getListUser']);
+//Admin ListUser
+Route::get('/users-list', [UserListController::class, 'getListUser']);
+Route::put('/users/{id}', [UserListController::class, 'updateUser']);
 Route::get('/totals', [ShortLinksController::class, 'getTotal']);
+//Admin ShortURL
 Route::get('/user-list/shortURL', [ShortLinksController::class, 'getShortURL']);
 
 Route::get('create', [MakeRoleController::class, 'create']);

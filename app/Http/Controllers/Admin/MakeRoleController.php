@@ -13,6 +13,9 @@ class MakeRoleController extends Controller
         Permission::create(['name' => 'Add user']);
         Permission::create(['name' => 'Edit user']);
         Permission::create(['name' => 'Delete User']);
+        Permission::create(['name' => 'Add link']);
+        Permission::create(['name' => 'Edit link']);
+        Permission::create(['name' => 'Delete link']);
     }
 
     /**

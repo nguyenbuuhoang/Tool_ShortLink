@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserListController extends Controller
 {
     public function getListUser()
     {
@@ -24,5 +25,13 @@ class UserController extends Controller
         });
 
         return response()->json(['users' => $userList], 200);
+    }
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $role = $request->input('role');
+        $user->syncRoles([$role]);
+
+        return response()->json(['message' => 'Vai trò của người dùng đã được cập nhật thành công'], 200);
     }
 }

@@ -14,17 +14,12 @@
         </li>
         <li>
             <a href={{route('admin.user-list')}}>
-                <i class="zmdi zmdi-link"></i> <span>Quản lý User</span>
-            </a>
-        </li>
-        <li>
-            <a href="icons.html">
-                <i class="zmdi zmdi-lock"></i> <span>Quản lý quyền</span>
+                <i class="zmdi zmdi-link"></i> <span>Quản lý User | Role</span>
             </a>
         </li>
         <li>
             <a href="forms.html">
-                <i class="zmdi zmdi-shield-security"></i> <span>Phân quyền</span>
+                <i class="zmdi zmdi-shield-security"></i> <span>Phân quyền Role</span>
             </a>
         </li>
     </ul>
