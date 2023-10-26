@@ -82,8 +82,8 @@
                     const tableBody = document.getElementById('shortUrlTableBody');
                     const currentTime = new Date();
 
-                    data.forEach(function(item) {
-                        const userIdText = item.user_id !== null ? item.user_id : "Khách";
+                    data.data.forEach(function(item) {
+                        const userName = item.user ? item.user.name : "Khách";
                         const expiredAt = new Date(item.expired_at);
                         const daysRemaining = Math.ceil((expiredAt - currentTime) / (1000 * 60 * 60 * 24));
                         const expiredText = daysRemaining > 0 ? `${daysRemaining} ngày` :
@@ -93,21 +93,22 @@
                             '<span class="badge badge-danger">Riêng tư</span>';
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${userIdText}</td>
-                            <td>${item.user_name}</td>
-                            <td>
-                                <div class="mb-2">
-                                    <i class=" fas fa-2x mr-2 fa-copy pointer d-none d-md-inline align-middle copy-icon" onclick="copyToClipboard('${item.short_url_link}')"></i>
-                                    <span class="align-middle" style="color: yellow; id="shortUrl_${item.id}">${item.short_url_link}</span>
-                                </div>
-                                <div>
-                                    <small><span style="color: yellow;">${shortenURLIfLong(item.url)}</span></small>
-                                </div>
-                            </td>
-                            <td>${item.total_clicks}</td>
-                            <td>${expiredText}</td>
-                            <td>${statusText}</td>
-                            `;
+                        <td>${item.id}</td>
+                        <td>${userName}</td>
+                        <td>
+                            <div class="mb-2">
+                                <i class="fas fa-2x mr-2 fa-copy pointer d-none d-md-inline align-middle copy-icon" onclick="copyToClipboard('${item.short_url_link}')"></i>
+                                <span class="align-middle" style="color: yellow;" id="shortUrl_${item.id}">${item.short_url_link}</span>
+                            </div>
+                            <div>
+                                <small><span style="color: yellow;">${shortenURLIfLong(item.url)}</span></small>
+                            </div>
+                        </td>
+                        <td>${item.clicks}</td>
+                        <td>${expiredText}</td>
+                        <td>${statusText}</td>
+
+                    `;
                         tableBody.appendChild(row);
                     });
                 })
