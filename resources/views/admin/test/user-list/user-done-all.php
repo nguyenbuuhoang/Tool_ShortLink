@@ -170,7 +170,7 @@
                 const row = $(this).closest('tr');
                 const userId = row.find('td:first')
                     .text();
-                $('#roleSelect').val('');
+                $('#roleSelect').val('user');
                 $('#editRoleModal').modal('show');
                 $('#saveRoleButton').data('userId', userId);
             });

@@ -22,7 +22,6 @@ class ShortUrlController extends Controller
         $shortCode = Str::random(4);
         $shortUrlLink = str_replace(['http://', 'https://'], '', url($shortCode));
         $qrCode = QrCode::size(200)->generate($shortUrlLink);
-        // Kiểm tra nếu người dùng là null, thiết lập expired_at thành 30 phút
         $expiredAt = $userId ? now()->addDays(5) : now()->addMinutes(30);
 
         $shortUrl = ShortUrl::create([

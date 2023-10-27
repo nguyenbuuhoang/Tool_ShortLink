@@ -3,72 +3,10 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-fluid">
-            <div class="mt-3">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalUsersCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng User</h5>
-                                <p class="card-text"><i class="fa fa-user"></i> <span id="totalUsersCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalShortURLCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng Số Link</h5>
-                                <p class="card-text"><i class="fa fa-link"></i> <span id="totalShortURLCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalClicksCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng Số Lần Click</h5>
-                                <p class="card-text"><i class="fa fa-eye"></i> <span id="totalClicksCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-12 col-lg-12">
                     <div class="card">
                         <div class="card-header">Quản lý links</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-2">
-                                    <label for="nameFilter">Tìm theo Tên:</label>
-                                    <input type="text" id="nameFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="urlFilter">Tìm theo Url gốc:</label>
-                                    <input type="text" id="urlFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortBy">Sắp xếp theo:</label>
-                                    <select id="sortBy" class="form-control">
-                                        <option value="id">ID</option>
-                                        <option value="name">Tên User</option>
-                                        <option value="role">Quyền</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortOrder">Thứ tự:</label>
-                                    <select id="sortOrder" class="form-control">
-                                        <option value="asc">Tăng dần</option>
-                                        <option value="desc">Giảm dần</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1 mb-2">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button type="button" id="filter-button"
-                                            class="btn btn-primary btn-block">Lọc</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush table-borderless">
                                 <thead>
@@ -90,25 +28,9 @@
             </div>
         </div>
     </div>
-
     <script>
-        function fetchDataAndDisplayTotals() {
-            fetch('/api/totals')
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    document.getElementById('totalUsersCount').textContent = data.total_users;
-                    document.getElementById('totalShortURLCount').textContent = data.total_short_url;
-                    document.getElementById('totalClicksCount').textContent = data.total_clicks;
-                })
-                .catch(function(error) {
-                    console.error('Lỗi khi tải dữ liệu:', error);
-                });
-        }
-
         function fetchShortURLList() {
-            fetch('/api/user-list/shortURL')
+            fetch('/api/shortURL')
                 .then(function(response) {
                     return response.json();
                 })
@@ -169,17 +91,6 @@
             return url;
         }
 
-        function copyToClipboard(text) {
-            const tempInput = document.createElement('input');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert('Đã sao chép đường dẫn thành công: ' + text);
-        }
-
-        fetchDataAndDisplayTotals();
         fetchShortURLList();
     </script>
 @endsection

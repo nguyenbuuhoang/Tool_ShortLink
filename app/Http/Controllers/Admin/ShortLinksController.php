@@ -45,17 +45,22 @@ class ShortLinksController extends Controller
     public function updateShortURL(Request $request, $id)
     {
         $shortUrl = ShortUrl::findOrFail($id);
-
+        $shortCode = $request->input('short_code');
+        $status = $request->input('status');
         $shortUrl->update([
-            'short_code' => $request->input('short_code'),
-            'short_url_link' => str_replace(['http://', 'https://'], '', url($request->input('short_code'))),
-            'status' => $request->input('status'),
-            'expired_at' => $request->input('expired_at'),
+            'short_code' => $shortCode,
+            'short_url_link' => str_replace(['http://', 'https://'], '', url($shortCode)),
+            'status' => $status,
         ]);
 
         return response()->json(['message' => 'Short URL đã được cập nhật thành công.']);
     }
-
+    public function getQRCode($id)
+    {
+        $shortUrl = ShortUrl::findOrFail($id);
+        $qrcode = $shortUrl->qrcode;
+        return response()->json(['qrcode' => $qrcode]);
+    }
 
     public function deleteShortURL($id)
     {

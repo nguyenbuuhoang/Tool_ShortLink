@@ -7,40 +7,6 @@
                 <div class="col-12 col-lg-12">
                     <div class="card">
                         <div class="card-header">Quản lý links</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-2">
-                                    <label for="nameFilter">Tìm theo Tên:</label>
-                                    <input type="text" id="nameFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="urlFilter">Tìm theo Url gốc:</label>
-                                    <input type="text" id="urlFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortBy">Sắp xếp theo:</label>
-                                    <select id="sortBy" class="form-control">
-                                        <option value="id">ID</option>
-                                        <option value="name">Tên User</option>
-                                        <option value="role">Quyền</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortOrder">Thứ tự:</label>
-                                    <select id="sortOrder" class="form-control">
-                                        <option value="asc">Tăng dần</option>
-                                        <option value="desc">Giảm dần</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1 mb-2">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button type="button" id="filter-button"
-                                            class="btn btn-primary btn-block">Lọc</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush table-borderless">
                                 <thead>
@@ -62,9 +28,7 @@
             </div>
         </div>
     </div>
-
     <script>
-
         function fetchShortURLList() {
             fetch('/api/user-list/shortURL')
                 .then(function(response) {
@@ -127,15 +91,6 @@
             return url;
         }
 
-        function copyToClipboard(text) {
-            const tempInput = document.createElement('input');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert('Đã sao chép đường dẫn thành công: ' + text);
-        }
         fetchShortURLList();
     </script>
 @endsection
