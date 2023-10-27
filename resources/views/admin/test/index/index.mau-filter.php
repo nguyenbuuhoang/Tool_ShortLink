@@ -3,34 +3,6 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-fluid">
-            <div class="mt-3">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalUsersCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng User</h5>
-                                <p class="card-text"><i class="fa fa-user"></i> <span id="totalUsersCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalShortURLCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng Số Link</h5>
-                                <p class="card-text"><i class="fa fa-link"></i> <span id="totalShortURLCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalClicksCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng Số Lần Click</h5>
-                                <p class="card-text"><i class="fa fa-eye"></i> <span id="totalClicksCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-12 col-lg-12">
                     <div class="card">
@@ -86,26 +58,21 @@
                             </table>
                         </div>
                     </div>
+                    <div class="pagination" id="pagination">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function fetchDataAndDisplayTotals() {
-            fetch('/api/totals')
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    document.getElementById('totalUsersCount').textContent = data.total_users;
-                    document.getElementById('totalShortURLCount').textContent = data.total_short_url;
-                    document.getElementById('totalClicksCount').textContent = data.total_clicks;
-                })
-                .catch(function(error) {
-                    console.error('Lỗi khi tải dữ liệu:', error);
-                });
-        }
+        const filterButton = $('#filter-button');
+        const nameFilter = $('#nameFilter');
+        const urlFilter = $('#urlFilter');
+        const sortBy = $('#sortBy');
+        const sortOrder = $('#sortOrder');
+        const pagination = $('#pagination');
+        let currentPage = 1;
 
         function fetchShortURLList() {
             fetch('/api/shortURL')
@@ -169,17 +136,7 @@
             return url;
         }
 
-        function copyToClipboard(text) {
-            const tempInput = document.createElement('input');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert('Đã sao chép đường dẫn thành công: ' + text);
-        }
 
-        fetchDataAndDisplayTotals();
         fetchShortURLList();
     </script>
 @endsection

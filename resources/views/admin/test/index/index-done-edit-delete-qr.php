@@ -3,72 +3,10 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-fluid">
-            <div class="mt-3">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalUsersCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng User</h5>
-                                <p class="card-text"><i class="fa fa-user"></i> <span id="totalUsersCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalShortURLCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng Số Link</h5>
-                                <p class="card-text"><i class="fa fa-link"></i> <span id="totalShortURLCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card" id="totalClicksCard">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng Số Lần Click</h5>
-                                <p class="card-text"><i class="fa fa-eye"></i> <span id="totalClicksCount"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-12 col-lg-12">
                     <div class="card">
                         <div class="card-header">Quản lý links</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-2">
-                                    <label for="nameFilter">Tìm theo Tên:</label>
-                                    <input type="text" id="nameFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="urlFilter">Tìm theo Url gốc:</label>
-                                    <input type="text" id="urlFilter" class="form-control">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortBy">Sắp xếp theo:</label>
-                                    <select id="sortBy" class="form-control">
-                                        <option value="id">ID</option>
-                                        <option value="name">Tên User</option>
-                                        <option value="role">Quyền</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label for="sortOrder">Thứ tự:</label>
-                                    <select id="sortOrder" class="form-control">
-                                        <option value="asc">Tăng dần</option>
-                                        <option value="desc">Giảm dần</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1 mb-2">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button type="button" id="filter-button"
-                                            class="btn btn-primary btn-block">Lọc</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush table-borderless">
                                 <thead>
@@ -85,8 +23,6 @@
                                 <tbody id="shortUrlTableBody"></tbody>
                             </table>
                         </div>
-                    </div>
-                    <div class="pagination" id="pagination">
                     </div>
                 </div>
             </div>
@@ -146,79 +82,21 @@
         </div>
     </div>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-    <script>
-        const filterButton = $('#filter-button');
-        const nameFilter = $('#nameFilter');
-        const urlFilter = $('#urlFilter ');
-        const sortBy = $('#sortBy');
-        const sortOrder = $('#sortOrder');
-        const pagination = $('#pagination');
-        const tableBody = $('#shortUrlTableBody');
-        const currentTime = new Date();
-        let currentPage = 1;
 
-        function fetchDataAndDisplayTotals() {
-            fetch('/api/totals')
+    <script>
+        function fetchShortURLList() {
+            fetch('/api/shortURL')
                 .then(function(response) {
                     return response.json();
                 })
                 .then(function(data) {
-                    document.getElementById('totalUsersCount').textContent = data.total_users;
-                    document.getElementById('totalShortURLCount').textContent = data.total_short_url;
-                    document.getElementById('totalClicksCount').textContent = data.total_clicks;
-                })
-                .catch(function(error) {
-                    console.error('Lỗi khi tải dữ liệu:', error);
-                });
-        }
+                    const tableBody = document.getElementById('shortUrlTableBody');
+                    const currentTime = new Date();
 
-        function fetchDataAndPopulateTable(page) {
-            currentPage = page;
-            const name = nameFilter.val();
-            const url = urlFilter.val();
-            const sort_by = sortBy.val();
-            const sort_order = sortOrder.val();
-
-            $.ajax({
-                url: '/api/shortURL',
-                method: 'GET',
-                data: {
-                    name,
-                    url,
-                    sort_by,
-                    sort_order,
-                    page,
-                },
-                dataType: 'json',
-                success: function(data) {
-                    const shortUrls = data.data;
-                    tableBody.empty();
-
-                    const updatePagination = data => {
-                        pagination.empty();
-                        if (data.last_page > 1) {
-                            for (let i = 1; i <= data.last_page; i++) {
-                                const pageLink = $('<a>').addClass('page-link').text(i);
-                                pageLink.on('click', () => fetchDataAndPopulateTable(i));
-
-                                const listItem = $('<li>').addClass('page-item');
-                                if (i === currentPage) {
-                                    listItem.addClass('active');
-                                }
-                                listItem.append(pageLink);
-
-                                pagination.append(listItem);
-                            }
-                        }
-                    };
-
-                    updatePagination(data);
-
-                    shortUrls.forEach(function(item) {
+                    data.data.forEach(function(item) {
                         const userName = item.user ? item.user.name : "Khách";
                         const expiredAt = new Date(item.expired_at);
-                        const daysRemaining = Math.ceil((expiredAt - currentTime) / (1000 * 60 * 60 *
-                            24));
+                        const daysRemaining = Math.ceil((expiredAt - currentTime) / (1000 * 60 * 60 * 24));
                         const expiredText = daysRemaining > 0 ? `${daysRemaining} ngày` :
                             "<span class='text-danger'>Hết hạn</span>";
                         const statusText = item.status === "active" ?
@@ -247,13 +125,13 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="actionMenu">
                                         <a class="dropdown-item edit-action" href="#">Sửa</a>
-                                        <a class="dropdown-item delete-action" href="#">Xóa</a>
-                                        <a class="dropdown-item qr-action" href="#">QR code</a>
+                                        <a class="dropdown-item delete-action" href="#" data-id="${item.id}">Xóa</a>
+                                        <a class="dropdown-item qr-action" href="#" data-shorturl="${item.short_url_link}">QR code</a>
                                     </div>
                                 </div>
                             </td>
                         `;
-                        tableBody.append(row);
+                        tableBody.appendChild(row);
 
                         // Edit action
                         row.querySelector('.edit-action').addEventListener('click', function(e) {
@@ -267,10 +145,9 @@
                             $('#editShortModal').modal('show');
 
                             $('#saveShortButton').off('click').on('click', function() {
-                                const newShortCode = document.getElementById(
-                                    'shortCodeInput').value;
-                                const newStatus = document.getElementById('newStatus')
+                                const newShortCode = document.getElementById('shortCodeInput')
                                     .value;
+                                const newStatus = document.getElementById('newStatus').value;
 
                                 if (newShortCode && newStatus) {
                                     $.ajax({
@@ -281,8 +158,7 @@
                                             status: newStatus,
                                         },
                                         headers: {
-                                            'X-CSRF-TOKEN': $(
-                                                    'meta[name="csrf-token"]')
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                                 .attr('content'),
                                         },
                                         success: function(data) {
@@ -308,8 +184,8 @@
                                     url: `/api/shortURL/${shortUrlId}`,
                                     method: 'DELETE',
                                     headers: {
-                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                            .attr('content'),
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                            'content'),
                                     },
                                     success: function(data) {
                                         alert('Xóa thành công.');
@@ -350,11 +226,10 @@
                             });
                         });
                     });
-                },
-                error: function(error) {
+                })
+                .catch(function(error) {
                     console.error('Lỗi khi tải dữ liệu: ' + error);
-                }
-            });
+                });
         }
 
         function shortenURLIfLong(url) {
@@ -364,20 +239,6 @@
             return url;
         }
 
-        function copyToClipboard(text) {
-            const tempInput = document.createElement('input');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert('Đã sao chép đường dẫn thành công: ' + text);
-        }
-
-        fetchDataAndDisplayTotals();
-        filterButton.click(function() {
-            fetchDataAndPopulateTable(1);
-        });
-        fetchDataAndPopulateTable(1);
+        fetchShortURLList();
     </script>
 @endsection

@@ -53,7 +53,7 @@ Route::get('/totals', [ShortLinksController::class, 'getTotal']);
 Route::get('/shortURL', [ShortLinksController::class, 'getShortURL']);
 Route::get('/shortURL/qrcode/{id}', [ShortLinksController::class, 'getQRCode']);
 Route::put('/shortURL/{id}', [ShortLinksController::class, 'updateShortURL']);
-
+Route::delete('/shortURL/{id}', [ShortLinksController::class, 'deleteShortURL']);
 
 //create role
 Route::get('create', [MakeRoleController::class, 'create']);

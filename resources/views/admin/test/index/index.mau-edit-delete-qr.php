@@ -32,7 +32,7 @@
     <script>
 
         function fetchShortURLList() {
-            fetch('/api/user-list/shortURL')
+            fetch('/api/shortURL')
                 .then(function(response) {
                     return response.json();
                 })

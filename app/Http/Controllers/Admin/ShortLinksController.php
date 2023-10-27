@@ -26,17 +26,25 @@ class ShortLinksController extends Controller
         $sort_by = $request->input('sort_by', 'id');
         $sort_order = $request->input('sort_order', 'asc');
         $name = $request->input('name');
-
+        $url = $request->input('url');
         $query = ShortUrl::with('user:id,name')
-            ->select('id', 'url', 'short_url_link', 'short_code', 'clicks', 'status', 'expired_at', 'created_at', 'user_id');
+            ->select('short_urls.id', 'url', 'short_url_link', 'short_code', 'clicks', 'status', 'expired_at', 'short_urls.created_at', 'user_id');
 
         if ($name) {
             $query->whereHas('user', function ($query) use ($name) {
                 $query->where('name', 'like', '%' . $name . '%');
             });
         }
+        if ($url) {
+            $query->where('url', 'like', '%' . $url . '%');
+        }
 
-        $query->orderBy($sort_by, $sort_order);
+        if ($sort_by === 'name') {
+            $query->join('users', 'short_urls.user_id', '=', 'users.id')
+                ->orderBy('users.name', $sort_order);
+        } else {
+            $query->orderBy($sort_by, $sort_order);
+        }
 
         $shortUrls = $query->paginate($perPage);
 
@@ -64,7 +72,7 @@ class ShortLinksController extends Controller
 
     public function deleteShortURL($id)
     {
-        $shortUrl = User::findOrFail($id);
+        $shortUrl = ShortUrl::findOrFail($id);
         $shortUrl->delete();
         return response()->json(['message' => 'Đã xóa short Url thành công'], 200);
     }
