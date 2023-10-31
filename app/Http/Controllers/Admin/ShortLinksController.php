@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\ShortUrl;
 use Illuminate\Http\Request;
+use App\Exports\ShortLinksExport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ShortLinksController extends Controller
 {
@@ -45,10 +47,19 @@ class ShortLinksController extends Controller
         } else {
             $query->orderBy($sort_by, $sort_order);
         }
-
+        if ($request->has('export') && $request->input('export') === 'csv') {
+            $shortLinks = $query->get();
+            return Excel::download(new ShortLinksExport($shortLinks), 'data_shorts.csv');
+        }
         $shortUrls = $query->paginate($perPage);
 
         return response()->json($shortUrls);
+    }
+    public function getQRCode($id)
+    {
+        $shortUrl = ShortUrl::findOrFail($id);
+        $qrcode = $shortUrl->qrcode;
+        return response()->json(['qrcode' => $qrcode]);
     }
     public function updateShortURL(Request $request, $id)
     {
@@ -62,12 +73,6 @@ class ShortLinksController extends Controller
         ]);
 
         return response()->json(['message' => 'Short URL đã được cập nhật thành công.']);
-    }
-    public function getQRCode($id)
-    {
-        $shortUrl = ShortUrl::findOrFail($id);
-        $qrcode = $shortUrl->qrcode;
-        return response()->json(['qrcode' => $qrcode]);
     }
 
     public function deleteShortURL($id)

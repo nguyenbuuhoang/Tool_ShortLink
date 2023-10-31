@@ -18,7 +18,7 @@
             </a>
         </li>
         <li>
-            <a href="forms.html">
+            <a href={{route('admin.permission')}}>
                 <i class="zmdi zmdi-shield-security"></i> <span>Phân quyền Role</span>
             </a>
         </li>

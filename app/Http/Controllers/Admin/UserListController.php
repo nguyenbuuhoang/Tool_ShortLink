@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Exports\UserListsExport;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserListController extends Controller
 {
@@ -23,7 +25,10 @@ class UserListController extends Controller
         }
 
         $query->orderBy($sort_by, $sort_order);
-
+        if ($request->has('export') && $request->input('export') === 'csv') {
+            $UserLists = $query->get();
+            return Excel::download(new UserListsExport($UserLists), 'data_users.csv');
+        }
         $users = $query->paginate($perPage);
 
         return response()->json(['users' => $users], 200);
@@ -43,7 +48,8 @@ class UserListController extends Controller
         $user->delete();
         return response()->json(['message' => 'Người dùng đã bị xóa thành công'], 200);
     }
-    public function deleteSelectedUsers(Request $request)
+
+/*     public function deleteSelectedUsers(Request $request)
     {
         $userIds = $request->input('user_ids', []);
 
@@ -57,5 +63,5 @@ class UserListController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Lỗi xóa người dùng'], 500);
         }
-    }
+    } */
 }

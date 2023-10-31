@@ -6,10 +6,17 @@
             <div class="row">
                 <div class="col-12 col-lg-12">
                     <div class="card">
-                        <div class="card-header">Danh sách user</div>
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-6 my-auto">Danh sách user</div>
+                                <div class="col-md-6 text-right">
+                                    <button id="exportCSV" class="btn btn-success">Export to CSV</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3 mb-2">
+                                <div class="col-md-4 mb-2">
                                     <label for="nameFilter">Tìm theo Tên:</label>
                                     <input type="text" id="nameFilter" class="form-control">
                                 </div>
@@ -27,12 +34,6 @@
                                         <option value="asc">Tăng dần</option>
                                         <option value="desc">Giảm dần</option>
                                     </select>
-                                </div>
-                                <div class="col-md-2 mb-2">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button id="exportCSV" class="btn btn-success btn-block">Export to CSV</button>
-                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -69,36 +70,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="editRoleModal" tabindex="-1" role="dialog" aria-labelledby="editRoleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editRoleModalLabel" style="color: black;">Chỉnh sửa vai trò</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editRoleForm">
-                        <div class="form-group">
-                            <label for="roleSelect" style="color: black;">Chọn vai trò:</label>
-                            <select class="form-control" id="roleSelect" name="role"
-                                style="background-color: rgb(89, 89, 92); color: white;">
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" id="saveRoleButton">Lưu</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('model.admin.user_list.editRoleModel')
     <script>
         $(document).ready(function() {
             const tableBody = $('tbody');
@@ -164,6 +136,8 @@
                     console.error('Lỗi:', error);
                 }
             });
+
+
             tableBody.on('click', '.edit-action', function(e) {
                 e.preventDefault();
 
@@ -256,6 +230,38 @@
                     }
                 });
             }
+
+            function exportCSV() {
+                const name = nameFilter.val();
+                const sortField = sortBy.val();
+                const sortOrderValue = sortOrder.val();
+                const apiUrl =
+                    `/api/users-list?name=${name}&sort_by=${sortField}&sort_order=${sortOrderValue}&export=csv`;
+
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    dataType: 'text',
+                    success: function(data) {
+                        const blob = new Blob([data], {
+                            type: 'text/csv'
+                        });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "data_users_list.csv";
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi gửi yêu cầu AJAX: ', error);
+                    }
+                });
+            }
+
+            $("#exportCSV").on("click", exportCSV);
 
             const updatePagination = data => {
                 pagination.empty();

@@ -8,23 +8,47 @@ use Spatie\Permission\Models\Permission;
 
 class MakeRoleController extends Controller
 {
-    public function index()
-    {
-        Permission::create(['name' => 'Add user']);
-        Permission::create(['name' => 'Edit user']);
-        Permission::create(['name' => 'Delete User']);
-        Permission::create(['name' => 'Add link']);
-        Permission::create(['name' => 'Edit link']);
-        Permission::create(['name' => 'Delete link']);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function addRole()
     {
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'editor']);
         Role::create(['name' => 'user']);
+    }
+
+    public function addPermissionUser()
+    {
+        Permission::create(['name' => 'add_user']);
+        Permission::create(['name' => 'edit_user']);
+        Permission::create(['name' => 'delete_user']);
+    }
+
+    public function addPermissionLink()
+    {
+        Permission::create(['name' => 'add_link']);
+        Permission::create(['name' => 'edit_link']);
+        Permission::create(['name' => 'delete_link']);
+    }
+
+    public function roleAsPermissionUser()
+    {
+        $admin = Role::create(['name' => 'admin']);
+        $admin->givePermissionTo('add user');
+        $admin->givePermissionTo('edit user');
+        $admin->givePermissionTo('delete user');
+
+        $editor = Role::create(['name' => 'editor']);
+        $editor->givePermissionTo('edit user');
+    }
+
+    public function roleAsPermissionLink()
+    {
+        $admin = Role::create(['name' => 'admin']);
+        $admin->givePermissionTo('add link');
+        $admin->givePermissionTo('edit link');
+        $admin->givePermissionTo('delete link');
+
+
+        $editor = Role::create(['name' => 'editor']);
+        $editor->givePermissionTo('edit link');
     }
 }

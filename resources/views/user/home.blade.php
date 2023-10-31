@@ -37,123 +37,116 @@
         </div>
     </div>
     <script>
-        const urlInput = document.getElementById('urlInput');
-        const shortenButton = document.getElementById('shortenButton');
-        const shortUrlDisplay = document.getElementById('shortUrl');
-        const errorContainer = document.getElementById('errorContainer');
-        let savedUrls = JSON.parse(localStorage.getItem('shortenedUrls')) || [];
+        $(document).ready(function() {
+            const urlInput = $('#urlInput');
+            const shortenButton = $('#shortenButton');
+            const shortUrlDisplay = $('#shortUrl');
+            const errorContainer = $('#errorContainer');
+            let savedUrls = JSON.parse(localStorage.getItem('shortenedUrls')) || [];
 
-        function removeExpiredURLs() {
-            const now = new Date();
-            const updatedSavedUrls = savedUrls.filter(data => {
-                const expirationTime = new Date(data.expired_at);
-                return expirationTime > now;
+            function removeExpiredURLs() {
+                const now = new Date();
+                const updatedSavedUrls = savedUrls.filter(data => {
+                    const expirationTime = new Date(data.expired_at);
+                    return expirationTime > now;
+                });
+
+                if (updatedSavedUrls.length < savedUrls.length) {
+                    savedUrls = updatedSavedUrls;
+                    localStorage.setItem('shortenedUrls', JSON.stringify(savedUrls));
+                    location.reload();
+                }
+            }
+
+            // Populate the table with saved URLs
+            savedUrls.forEach(data => {
+                displayShortURL(data);
             });
 
-            if (updatedSavedUrls.length < savedUrls.length) {
-                savedUrls = updatedSavedUrls;
-                localStorage.setItem('shortenedUrls', JSON.stringify(savedUrls));
-                location.reload();
-            }
-        }
+            // Check and remove expired URLs
+            removeExpiredURLs();
 
-        // Populate the table with saved URLs
-        savedUrls.forEach(data => {
-            displayShortURL(data);
-        });
+            shortenButton.on('click', shortenURL);
 
-        // Kiểm tra và xóa các URL đã hết hạn
-        removeExpiredURLs();
-
-        shortenButton.addEventListener('click', shortenURL);
-
-        function shortenURL() {
-            const url = urlInput.value;
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            fetch('/api/create-short-url', {
+            function shortenURL() {
+                const url = urlInput.val();
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: '/api/create-short-url',
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({
+                    data: JSON.stringify({
                         url
                     }),
-                })
-                .then(response => {
-                    if (response.ok) return response.json();
-                    return response.json().then(data => {
-                        const errorMessages = data.errors;
+                    contentType: 'application/json',
+                    success: function(data) {
+                        errorContainer.css('display', 'none');
+                        displayShortURL(data);
+                        savedUrls.push(data);
+                        if (savedUrls.length > 3) {
+                            savedUrls.shift();
+                        }
+                        localStorage.setItem('shortenedUrls', JSON.stringify(savedUrls));
+                        removeExpiredURLs();
+                    },
+                    error: function(xhr) {
+                        const errorMessages = xhr.responseJSON.errors;
                         let errorMessage = '';
                         for (let key in errorMessages) {
                             errorMessage += errorMessages[key][0] + ' ';
                         }
-                        errorContainer.textContent = errorMessage;
-                        errorContainer.style.display = 'block';
-                        throw new Error('Failed to shorten URL');
-                    });
-                })
-                .then(data => {
-                    errorContainer.style.display = 'none';
-                    displayShortURL(data);
-                    // Lưu URL đã rút gọn vào localStorage
-                    savedUrls.push(data);
-                    // Giới hạn số URL được lưu trong localStorage
-                    if (savedUrls.length > 3) {
-                        savedUrls.shift();
+                        errorContainer.text(errorMessage);
+                        errorContainer.css('display', 'block');
                     }
-                    localStorage.setItem('shortenedUrls', JSON.stringify(savedUrls));
-                    // Kiểm tra và xóa các URL đã hết hạn
-                    removeExpiredURLs();
-                })
-                .catch(error => {
-                    console.error(error);
                 });
-        }
-
-        function displayShortURL(data) {
-            const displayedUrl = data.url.length > 30 ? data.url.substring(0, 30) + '...' : data.url;
-            const newRow = createShortURLRow(data.short_url_link, displayedUrl, data.expired_at);
-            shortUrlDisplay.appendChild(newRow);
-
-            const copyButton = newRow.querySelector('.copyButton');
-            copyButton.addEventListener('click', () => {
-                copyToClipboard(data.short_url_link);
-            });
-        }
-
-        function createShortURLRow(shortURL, displayedURL, expiredAt) {
-            const now = new Date();
-            const expirationTime = new Date(expiredAt);
-            const timeDifference = expirationTime - now;
-
-            let timeRemaining = '';
-            if (timeDifference > 0) {
-                const minutesRemaining = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                if (minutesRemaining > 0) {
-                    timeRemaining = `${minutesRemaining} phút`;
-                }
-            } else {
-                timeRemaining = 'Hết hạn';
             }
 
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td title="${shortURL}">${displayedURL}</td>
-                <td>${shortURL}</td>
-                <td>${timeRemaining}</td>
-                <td><button class="copyButton">Copy</button></td>`;
-            return newRow;
-        }
+            function displayShortURL(data) {
+                const displayedUrl = data.url.length > 30 ? data.url.substring(0, 30) + '...' : data.url;
+                const newRow = createShortURLRow(data.short_url_link, displayedUrl, data.expired_at);
+                shortUrlDisplay.append(newRow);
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    alert('Link đã được sao chép: ' + text);
-                })
-                .catch(error => {
-                    console.error('Sao chép thất bại: ' + error);
+                const copyButton = newRow.find('.copyButton');
+                copyButton.on('click', function() {
+                    copyToClipboard(data.short_url_link);
                 });
-        }
+            }
+
+            function createShortURLRow(shortURL, displayedURL, expiredAt) {
+                const now = new Date();
+                const expirationTime = new Date(expiredAt);
+                const timeDifference = expirationTime - now;
+
+                let timeRemaining = '';
+                if (timeDifference > 0) {
+                    const minutesRemaining = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                    if (minutesRemaining > 0) {
+                        timeRemaining = `${minutesRemaining} phút`;
+                    }
+                } else {
+                    timeRemaining = 'Hết hạn';
+                }
+
+                const newRow = $('<tr>');
+                newRow.html(`
+                    <td title="${shortURL}">${displayedURL}</td>
+                    <td>${shortURL}</td>
+                    <td>${timeRemaining}</td>
+                    <td><button class="copyButton">Copy</button></td>`);
+                return newRow;
+            }
+
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        alert('Link đã được sao chép: ' + text);
+                    })
+                    .catch(error => {
+                        console.error('Sao chép thất bại: ' + error);
+                    });
+            }
+        });
     </script>
 @endsection
